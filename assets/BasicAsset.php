@@ -18,7 +18,7 @@ class BasicAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        'basic/bootstrap.min.css',
+        'basic/Flatly/bootstrap.min.css',
         'css/site.css'
     ];
     public $js = [
