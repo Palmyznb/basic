@@ -1,8 +1,10 @@
 <?php
+$gdata = $dataProvider -> getModels(); 
 
 use kartik\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
+use app\models\Yearselect;
 
 $this->title = 'Chart3';
 $this->params['breadcrumbs'][] = [
@@ -11,9 +13,7 @@ $this->params['breadcrumbs'][] = [
         'chart/index'
     ]
 ];
-
 $this->params['breadcrumbs'][] = $this->title;
-$gdata = $dataProvider -> getModels(); 
 
 use miloschuman\highcharts\Highcharts;
 use miloschuman\highcharts\HighchartsAsset;
@@ -36,50 +36,20 @@ $xlabel = implode("','", $xname);
 $rvalue = implode(",", $result);
 $tvalue = implode(",", $target);
 
-$y = isset($_REQUEST['year'])?$_REQUEST['year':date('Y');
+$y = isset($_REQUEST['year'])?$_REQUEST['year']:date('Y');
 ?>
-<?= Html::beginFrom(); ?>
+
+<?= Html::beginForm(); ?>
+<?= Html::label('ปีงบประมาณ') ?>
+<?= Html::dropDownList('year', $y, ArrayHelper::map(
+    Yearselect::find()->orderBy('yearvalue desc')->all(),
+    'yearvalue', 'yearthai'),
+    ['class' => 'form-control', 'prompt' => 'โปรดเลือกปี...', 'required' => true]);
+?>
+<?= Html::submitButton('ค้นหา',['class'=>'btn btn-primary']); ?>
+<?=Html::endForm(); ?>
 
 <div id="container"></div>
-<?php
-$this->registerJs("
-    $(function () {
-    $('#container').highcharts({
-        title: {
-            text: 'Chart3'
-        },
-        xAxis: {
-            categories: ['$xlabel']
-        },
-        labels: {
-            items: [{
-                html: 'Total fruit consumption',
-                style: {
-                    left: '50px',
-                    top: '18px',
-                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'black'
-                }
-            }]
-        },
-        series: [{
-            type: 'column',
-            name: 'ผลลัพธ์',
-            data: [$rvalue]
-        }, {
-            type: 'spline',
-            name: 'เป้าหมาย',
-            data: [$tvalue],
-            marker: {
-                lineWidth: 2,
-                lineColor: Highcharts.getOptions().colors[3],
-                fillColor: 'white'
-            }
-        }]
-    });
-});
-");
-   
-?>
 <?= GridView::widget([
     'dataProvider' => $dataProvider,
     'panel' => [
@@ -126,4 +96,44 @@ $this->registerJs("
     ]
 ]);
 
+?>
+
+<?php
+$this->registerJs("
+    $(function () {
+    $('#container').highcharts({
+        title: {
+            text: 'Chart3'
+        },
+        xAxis: {
+            categories: ['$xlabel']
+        },
+        labels: {
+            items: [{
+                html: 'Total fruit consumption',
+                style: {
+                    left: '50px',
+                    top: '18px',
+                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'black'
+                }
+            }]
+        },
+        series: [{
+            type: 'column',
+            name: 'ผลลัพธ์',
+            data: [$rvalue]
+        }, {
+            type: 'spline',
+            name: 'เป้าหมาย',
+            data: [$tvalue],
+            marker: {
+                lineWidth: 2,
+                lineColor: Highcharts.getOptions().colors[3],
+                fillColor: 'white'
+            }
+        }]
+    });
+});
+");
+   
 ?>
